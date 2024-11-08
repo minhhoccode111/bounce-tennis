@@ -27,7 +27,8 @@ function AdminFr() {
     fetch(`${process.env.REACT_APP_SERVER_URL}/users/all`)
       .then((res) => res.json())
       .then((data) => {
-        const filteredUsers = data.filter((user) => !user.delete);
+        // const filteredUsers = data.filter((user) => !user.delete);
+        const filteredUsers = data.filter((user) => user.delete);
         setUsers(filteredUsers);
       })
       .catch((error) => {
@@ -40,14 +41,14 @@ function AdminFr() {
 
     try {
       const res = await fetch(
-        `http://localhost:3002/users/${userId}/soft-delete`,
+        `${process.env.REACT_APP_SERVER_URL}/users/${userId}/soft-delete`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ delete: true }),
-        }
+        },
       );
       const data = await res.json();
       console.log(data);
@@ -87,7 +88,7 @@ function AdminFr() {
           body: JSON.stringify({
             content: announcement,
           }),
-        }
+        },
       );
       const data = await response.json();
       console.log(data);

@@ -1,0 +1,26 @@
+# in-place variable syntax
+@url = http://localhost:3001
+
+
+###
+GET {{url}}/
+
+###
+POST {{url}}/
+
+{
+    "enableRecordSpecies":false,
+    "page":1,
+    "size":10,
+    "searchBy":"all",
+    "typeForSearchBy":"all"
+}
+
+###
+POST {{url}}/
+
+{
+    "enableRecordSpecies":false,
+    "searchBy":"all",
+    "typeForSearchBy":"all"
+}

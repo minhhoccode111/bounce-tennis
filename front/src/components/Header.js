@@ -10,7 +10,7 @@ function Header() {
       .then((res) => res.json())
       .then((data) => {
         setAnnouncement(data[0].content);
-        console.log(data);
+        // console.log(data);
       })
       .catch((error) => {
         // console.error("Error fetching users:", error);
