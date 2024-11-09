@@ -30,6 +30,7 @@ const courtSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
+
 module.exports = mongoose.model("Court", courtSchema);

@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const User = require("../models/user");
+// const User = require("../models/user");
 const userControllers = {};
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -57,7 +57,7 @@ userControllers.creatingUser = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       {
         expiresIn: "1h",
-      }
+      },
     );
 
     res
@@ -131,13 +131,13 @@ userControllers.updateNewPassword = async (req, res) => {
       res.json({
         success: true,
         message: "Password has been updated",
-      })
+      }),
     )
     .catch((_) =>
       res.status(500).json({
         success: false,
         message: "Could not update the password",
-      })
+      }),
     );
 };
 

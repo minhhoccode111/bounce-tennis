@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Court = require("../models/court");
-const Content = require("../models/content");
-const user = require("../models/user");
+// const Court = require("../models/court");
+// const Content = require("../models/content");
+// const user = require("../models/user");
 
 const courtControllers = {};
 
@@ -81,7 +81,7 @@ courtControllers.bookedCourt = async (req, res) => {
       monthBooked: 1,
       _id: 1,
       userBooked: 1,
-    }
+    },
   );
   res.json(bookings);
 };
@@ -95,7 +95,7 @@ courtControllers.postAnnoucement = async (req, res) => {
     let updatedContent = await Content.findOneAndUpdate(
       {}, // Empty query to match any document
       { $set: { content: content } }, // Update operation to set new content
-      { upsert: true, new: true } // Options to create new document if not found and return the updated document
+      { upsert: true, new: true }, // Options to create new document if not found and return the updated document
     );
 
     // Send success response with the updated content
