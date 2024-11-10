@@ -1,27 +1,14 @@
 -- Create the Users table
 CREATE TABLE Users (
-    id NVARCHAR(50) PRIMARY KEY, -- Assuming `id` is unique and serves as the primary key
+    id NVARCHAR(50) PRIMARY KEY,
     name NVARCHAR(255) NOT NULL,
     username NVARCHAR(255) NOT NULL UNIQUE,
     password NVARCHAR(255) NOT NULL,
-    is_deleted BIT DEFAULT 0, -- Renaming `delete` to `is_deleted` as `delete` is a reserved keyword
-    role NVARCHAR(50) DEFAULT 'user' CHECK (role IN ('user', 'admin')), -- Enum constraint for role
+    is_deleted BIT DEFAULT 0,
+    role NVARCHAR(50) DEFAULT 'user' CHECK (role IN ('user', 'admin')),
     created_at DATETIME2 DEFAULT GETDATE(),
     updated_at DATETIME2 DEFAULT GETDATE()
 );
-GO
-
--- Trigger to automatically update `updated_at` on row update
-CREATE TRIGGER trg_UpdateTimestamp
-ON Users
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE Users
-    SET updated_at = GETDATE()
-    FROM Users INNER JOIN inserted ON Users.id = inserted.id;
-END;
 GO
 
 -- Insert dummy data

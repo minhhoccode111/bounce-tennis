@@ -1,36 +1,50 @@
-const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
-const courtSchema = new mongoose.Schema(
+const { DataTypes, Model } = require("sequelize");
+const { sequelize } = require("./../config/dbConfig");
+const User = require("./User");
+
+class Court extends Model {}
+
+Court.init(
   {
     timeBooked: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     courtBooked: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     dayBooked: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     userBooked: {
-      type: ObjectId,
-      ref: "User",
-      required: true,
+      type: DataTypes.INTEGER, // Foreign key referencing User model
+      allowNull: false,
+      references: {
+        model: User, // Reference the User model
+        key: "id", // Assuming 'id' is the primary key of User
+      },
     },
     yearBooked: {
-      type: Number,
-      required: true,
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     monthBooked: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
+    sequelize,
+    modelName: "Court",
     timestamps: true,
   },
 );
 
-module.exports = mongoose.model("Court", courtSchema);
+// Setting up the association
+Court.belongsTo(User, { foreignKey: "userBooked" });
+
+console.log(Court === sequelize.models.Court); // true
+
+module.exports = Court;

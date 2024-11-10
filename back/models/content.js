@@ -1,15 +1,20 @@
-const mongoose = require("mongoose");
+const { DataTypes, Model } = require("sequelize");
+const { sequelize } = require("./../config/dbConfig");
 
-const contentSchema = new mongoose.Schema(
+class Content extends Model {}
+
+Content.init(
   {
     content: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
+    sequelize,
+    modelName: "Content",
     timestamps: true,
   },
 );
 
-module.exports = mongoose.model("Content", contentSchema);
+module.exports = Content;
