@@ -1,10 +1,16 @@
 const { DataTypes, Model } = require("sequelize");
 const { sequelize } = require("./../config/dbConfig");
+const bcrypt = require("bcrypt");
 
-class User extends Model {}
-
-User.init(
+const User = sequelize.define(
+  "User",
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4, // auto generate id
+      primaryKey: true,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -12,17 +18,13 @@ User.init(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      // unique: true,
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    id: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    delete: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
@@ -32,12 +34,22 @@ User.init(
     },
   },
   {
-    sequelize,
-    modelName: "User",
     timestamps: true,
+    // stop auto-pluralization performed by Sequelize
+    // example: User model will create Users table automatically by Sequelize
+    freezeTableName: true,
+    // providing table name directly
+    // tableName: 'User'
   },
 );
 
-// console.log(User === sequelize.models.User); // true
+// Model.prototype.matchPassword = async function (enteredPassword) {
+//   return await bcrypt.compare(enteredPassword, this.password);
+// };
+
+// User.addHook("beforeCreate", async (user) => {
+//   const encryptedPassword = await bcrypt.hash(user.password, process.env.SALT);
+//   user.password = encryptedPassword;
+// });
 
 module.exports = User;

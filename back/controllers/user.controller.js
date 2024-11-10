@@ -1,21 +1,25 @@
-var express = require("express");
-var router = express.Router();
-// const User = require("../models/user");
+const User = require("../models/user");
 const userControllers = {};
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const { createTokens, validateToken } = require("../middleware/loginRequired");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
 userControllers.creatingUser = async (req, res) => {
-  const { name, id, username, password } = req.body;
+  const {
+    name,
+    // id,
+    username,
+    password,
+  } = req.body;
 
   const isEmailValid = isValidEmail(username);
+
   if (!isEmailValid) {
     return res.status(400).json({
       success: false,
@@ -23,7 +27,8 @@ userControllers.creatingUser = async (req, res) => {
       errorCode: 10002,
     });
   }
-  if (password.length < 4) {
+
+  if (password.length < 6) {
     return res.json({
       success: false,
       message: "Password must have at least 6 characters",
@@ -31,41 +36,42 @@ userControllers.creatingUser = async (req, res) => {
     });
   }
 
-  const existingUser = await User.findOne({ username });
+  const existingUser = await User.findOne({
+    where: { username },
+  });
 
   if (existingUser) {
-    res
+    return res
       .status(400)
       .json({ success: false, message: "Username already exists" });
   }
+
   try {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const newUser = new User({ name, username, password: hashedPassword, id });
-
-    await newUser.save();
-    // res.status(200).json({
-    //   success: true,
-    //   message: "User registered successfully",
-    //   username: newUser.name,
-    //   email: newUser.username,
-    //   id: newUser._id,
-    // });
+    const newUser = await User.create({
+      name,
+      username,
+      password: hashedPassword,
+      // id,
+    });
 
     const token = jwt.sign(
-      { name: newUser.name, id: newUser._id },
+      { name: newUser.name, id: newUser.id },
       process.env.JWT_SECRET_KEY,
       {
         expiresIn: "1h",
       },
     );
 
-    res
+    return res
       .status(200)
       .json({ token, name: newUser.name, message: "Login successful" });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ success: false, message: "Error registering user" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Error registering user" });
   }
 };
 
@@ -73,7 +79,10 @@ userControllers.loggingUser = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({
+      where: { username },
+    });
+
     if (!user) {
       return res.json({
         success: false,
@@ -81,22 +90,32 @@ userControllers.loggingUser = async (req, res) => {
         errorCode: 10001,
       });
     }
+
+    // console.log(`user password in database belike: `, user.password);
+    // console.log(`password send from client belike: `, password);
+
     const result = await bcrypt.compare(password, user.password);
+
     if (result) {
-      res.json({
+      return res.json({
         success: true,
         message: "Login successful",
         username: user.name,
         email: user.username,
-        id: user._id,
+        id: user.id,
         role: user.role,
       });
     } else {
-      res.json({ success: false, message: "Invalid username or password" });
+      return res.json({
+        success: false,
+        message: "Invalid username or password",
+      });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -104,7 +123,9 @@ userControllers.resetingUser = async (req, res) => {
   const { username } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({
+      where: { username },
+    });
 
     if (!user) {
       return res.json({
@@ -126,7 +147,7 @@ userControllers.resetingUser = async (req, res) => {
 userControllers.updateNewPassword = async (req, res) => {
   const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
-  await User.findOneAndUpdate({ username }, { password: hashedPassword })
+  await User.update({ password: hashedPassword }, { where: { username } })
     .then((_) =>
       res.json({
         success: true,
@@ -141,10 +162,10 @@ userControllers.updateNewPassword = async (req, res) => {
     );
 };
 
-userControllers.displayAll = async (req, res) => {
+userControllers.displayAll = async (_, res) => {
   try {
     // Fetch all users from the database
-    const users = await User.find();
+    const users = await User.findAll();
 
     // Send the users as a response
     res.status(200).json(users);
@@ -158,14 +179,13 @@ userControllers.displayAll = async (req, res) => {
 userControllers.softDeleting = async (req, res) => {
   const id = req.params.userId;
   try {
-    const user = await User.findById(id);
+    const user = await User.findByPk(id);
 
     if (!user) {
       return res.status(401).json({ error: "User Not Found" });
     }
 
-    user.delete = true;
-    await user.save();
+    await user.update({ isDeleted: true });
     res.status(200).json({ message: "User soft deleted successfully" });
   } catch (error) {
     console.log(error);

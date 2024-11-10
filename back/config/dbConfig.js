@@ -17,6 +17,12 @@ const sequelize = new Sequelize(database, username, password, {
 const connectDatabase = async () => {
   try {
     await sequelize.authenticate();
+
+    // sync tables in db, can be destructive and should not be used in production
+    // both alter and force, we should use something to migrate gracefully
+    // await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });
+
     console.log("Connection has been established successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);

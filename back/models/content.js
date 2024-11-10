@@ -1,19 +1,24 @@
 const { DataTypes, Model } = require("sequelize");
 const { sequelize } = require("./../config/dbConfig");
 
-class Content extends Model {}
-
-Content.init(
+const Content = sequelize.define(
+  "Content",
   {
+    id: {
+      type: DataTypes.STRING,
+      defaultValue: DataTypes.UUIDV4, // auto generate id
+      primaryKey: true,
+      allowNull: false,
+    },
     content: {
       type: DataTypes.STRING,
       allowNull: false,
     },
   },
   {
-    sequelize,
-    modelName: "Content",
     timestamps: true,
+    // stop auto-pluralization performed by Sequelize
+    freezeTableName: true,
   },
 );
 

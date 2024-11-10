@@ -6,21 +6,31 @@
 GET {{url}}/
 
 ###
-POST {{url}}/
+POST {{url}}/users
 
 {
-    "enableRecordSpecies":false,
-    "page":1,
-    "size":10,
-    "searchBy":"all",
-    "typeForSearchBy":"all"
+    "name": "asd",
+    "username": "asd1@gmail.com",
+    "password": "asdasd"
 }
 
 ###
-POST {{url}}/
+POST {{url}}/users/login
 
 {
-    "enableRecordSpecies":false,
-    "searchBy":"all",
-    "typeForSearchBy":"all"
+    "username": "asd1@gmail.com",
+    "password": "asdasd"
 }
+
+###
+GET {{url}}/users/get
+
+### TODO: 
+
+###
+POST {{url}}/users/send
+
+{
+    "content": "khong dieu kien 1"
+}
+

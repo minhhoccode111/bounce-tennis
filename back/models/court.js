@@ -1,11 +1,16 @@
 const { DataTypes, Model } = require("sequelize");
 const { sequelize } = require("./../config/dbConfig");
-const User = require("./User");
+const User = require("./user");
 
-class Court extends Model {}
-
-Court.init(
+const Court = sequelize.define(
+  "Court",
   {
+    id: {
+      type: DataTypes.STRING,
+      defaultValue: DataTypes.UUIDV4, // auto generate id
+      primaryKey: true,
+      allowNull: false,
+    },
     timeBooked: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -18,12 +23,13 @@ Court.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    // foreign key
     userBooked: {
-      type: DataTypes.INTEGER, // Foreign key referencing User model
+      type: DataTypes.CHAR(36),
       allowNull: false,
       references: {
-        model: User, // Reference the User model
-        key: "id", // Assuming 'id' is the primary key of User
+        model: "User",
+        key: "id",
       },
     },
     yearBooked: {
@@ -36,15 +42,13 @@ Court.init(
     },
   },
   {
-    sequelize,
-    modelName: "Court",
     timestamps: true,
+    // stop auto-pluralization performed by Sequelize
+    freezeTableName: true,
   },
 );
 
 // Setting up the association
 Court.belongsTo(User, { foreignKey: "userBooked" });
-
-console.log(Court === sequelize.models.Court); // true
 
 module.exports = Court;
