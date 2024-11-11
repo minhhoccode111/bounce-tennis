@@ -13,8 +13,12 @@ courtControllers.bookingCourt = async (req, res) => {
     monthBooked,
     yearBooked,
   } = req.body;
+
+  // TODO: this should be transaction ACID, when 1 timeBooked court fail others
+  // must also fail
+
+  console.log(req.body);
   for (const time of timeBooked) {
-    console.log(req.body);
     try {
       await Court.create({
         timeBooked: time,
@@ -30,7 +34,7 @@ courtControllers.bookingCourt = async (req, res) => {
       return;
     }
   }
-  res.status(201).send("Booking added successfully!");
+  res.status(201).json({ message: "Booking added successfully!" });
 };
 
 courtControllers.deleteCourt = async (req, res) => {
@@ -55,13 +59,15 @@ courtControllers.deleteCourt = async (req, res) => {
       },
     });
     if (deletedCount > 0) {
-      res.status(200).send("Court was deleted successfully");
+      res.status(200).json({ message: "Court was deleted successfully" });
     } else {
-      res.status(404).send("Court not found");
+      res.status(404).json({ message: "Court not found" });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send("There was an error with deleting the court");
+    return res
+      .status(500)
+      .json({ message: "There was an error with deleting the court" });
   }
 };
 

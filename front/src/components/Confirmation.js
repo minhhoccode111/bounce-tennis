@@ -66,6 +66,15 @@ function Confirmation({
     }
 
     try {
+      const body = JSON.stringify({
+        courtBooked: courtConfirmation,
+        timeBooked: [...times].map((time) => timeIntervals[time]),
+        dayBooked: days[selecteDay].dayOfMonth,
+        monthBooked: months[date.getMonth()],
+        yearBooked: date.getFullYear(),
+        userBooked: userId,
+      });
+      // console.log(`body belike: `, body);
       const req = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/users/booking`,
         {
@@ -73,14 +82,7 @@ function Confirmation({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            courtBooked: courtConfirmation,
-            timeBooked: [...times].map((time) => timeIntervals[time]),
-            dayBooked: days[selecteDay].dayOfMonth,
-            monthBooked: months[date.getMonth()],
-            yearBooked: date.getFullYear(),
-            userBooked: userId,
-          }),
+          body: body,
         },
       );
 

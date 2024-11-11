@@ -1,36 +1,73 @@
 # in-place variable syntax
 @url = http://localhost:3001
-
+@id = c3dae28e-ab8d-40eb-a0ca-bcc9a5c5ec55
 
 ###
 GET {{url}}/
-
 ###
 POST {{url}}/users
 
 {
     "name": "asd",
-    "username": "asd1@gmail.com",
+    "username": "asd@gmail.com",
     "password": "asdasd"
 }
-
 ###
 POST {{url}}/users/login
 
 {
-    "username": "asd1@gmail.com",
+    "username": "asd@gmail.com",
     "password": "asdasd"
 }
-
-###
+### this is for getting announcement, not getting all users
 GET {{url}}/users/get
-
-### TODO: 
-
 ###
 POST {{url}}/users/send
 
 {
-    "content": "khong dieu kien 1"
+    "content": "content0"
 }
+###
+PUT {{url}}/users/reset/new
 
+{
+    "username": "asd@gmail.com",
+    "password": "asdasd"
+}
+###
+POST {{url}}/users/reset
+
+{
+    "username": "asd@gmail.com"
+}
+### get all users
+GET {{url}}/users/all
+### test not found
+PUT {{url}}/users/asd/soft-delete
+### try soft delete user
+PUT {{url}}/users/{{id}}/soft-delete
+###
+POST {{url}}/users/booking
+
+{
+  "courtBooked": "Court 1",
+  "timeBooked": [ "8:00 - 8:30 am", "8:30 - 9:00 am", "9:00 - 9:30 am" ],
+  "dayBooked": 11,
+  "monthBooked": "November",
+  "yearBooked": 2024,
+  "userBooked": "{{id}}"
+}
+###
+GET {{url}}/users/booked
+###
+DELETE {{url}}/users/delete
+
+{
+  "courtBooked": "Court 1",
+  "timeBooked": "9:00 - 9:30 am",
+  "dayBooked": 11,
+  "monthBooked": "November",
+  "yearBooked": 2024,
+  "userBooked": "{{id}}"
+}
+###

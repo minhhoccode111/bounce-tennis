@@ -21,7 +21,7 @@ const connectDatabase = async () => {
     // sync tables in db, can be destructive and should not be used in production
     // both alter and force, we should use something to migrate gracefully
     // await sequelize.sync({ alter: true });
-    await sequelize.sync({ force: true });
+    // await sequelize.sync({ force: true });
 
     console.log("Connection has been established successfully.");
   } catch (error) {

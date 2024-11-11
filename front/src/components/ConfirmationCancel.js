@@ -48,7 +48,7 @@ function ConfirmationCancel({
       },
       function (err) {
         console.log("FAILED...", err);
-      }
+      },
     );
   }
 
@@ -65,6 +65,15 @@ function ConfirmationCancel({
       return;
     }
     try {
+      const body = JSON.stringify({
+        courtBooked: courtConfirmation,
+        timeBooked: realTime,
+        dayBooked: days[selecteDay].dayOfMonth,
+        monthBooked: months[date.getMonth()],
+        yearBooked: date.getFullYear(),
+        userBooked: userId,
+      });
+      // console.log(`body belike: `, body);
       const req = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/users/delete`,
         {
@@ -72,15 +81,8 @@ function ConfirmationCancel({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            courtBooked: courtConfirmation,
-            timeBooked: realTime,
-            dayBooked: days[selecteDay].dayOfMonth,
-            monthBooked: months[date.getMonth()],
-            yearBooked: date.getFullYear(),
-            userBooked: userId,
-          }),
-        }
+          body: body,
+        },
       );
 
       setCancelTime();
