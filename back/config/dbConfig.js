@@ -20,7 +20,9 @@ const connectDatabase = async () => {
 
     // sync tables in db, can be destructive and should not be used in production
     // both alter and force, we should use something to migrate gracefully
-    // await sequelize.sync({ alter: true });
+    // WARN: to setup running on new local, turn this on (after create ms sql
+    // database manually) to create tables automatically
+    await sequelize.sync({ alter: true });
     // await sequelize.sync({ force: true });
 
     console.log("Connection has been established successfully.");
